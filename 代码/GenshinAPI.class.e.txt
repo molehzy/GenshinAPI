@@ -1,0 +1,695 @@
+﻿.版本 2
+.支持库 dp1
+.支持库 e2ee
+
+.程序集 GenshinAPI, , 公开
+.程序集变量 ck, 文本型
+
+.子程序 _初始化, , , 当基于本类的对象被创建后，此方法会被自动调用
+    
+
+.子程序 _销毁, , , 当基于本类的对象被销毁前，此方法会被自动调用
+    
+
+.子程序 _get_time, 文本型
+    返回 (到文本 (取时间间隔 (取现行时间 (), 到时间 (“1970-01-01 08:00:00”), #秒)))
+    
+
+.子程序 _get_random_ascii_letters, 文本型
+    .参数 long, 整数型
+    .局部变量 res, 文本型
+    .局部变量 return, 文本型
+
+    res ＝ “abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ”
+    置随机数种子 ()
+    .计次循环首 (long, )
+        return ＝ return ＋ 取文本中间 (res, 取随机数 (1, 52), 1)
+    .计次循环尾 ()
+    返回 (return)
+    
+
+.子程序 _get_random_num, 文本型
+    .参数 long, 整数型
+    .局部变量 return, 文本型
+
+    置随机数种子 ()
+    .计次循环首 (long, )
+        return ＝ return ＋ 到文本 (取随机数 (0, 9))
+    .计次循环尾 ()
+    返回 (return)
+    
+
+.子程序 _get_ds_OS, 文本型, , https://github.com/genshin-kit/genshin-kit
+    .局部变量 t, 文本型
+    .局部变量 r, 文本型
+    .局部变量 h, 文本型
+
+    t ＝ _get_time ()
+    r ＝ _get_random_ascii_letters (6)
+    h ＝ 取数据摘要 (文本到UTF8 (“salt=6s25p5ox5y14umn1p61aqyyvbvvl3lrt” ＋ “&t=” ＋ t ＋ “&r=” ＋ r))
+    返回 (t ＋ “,” ＋ r ＋ “,” ＋ h)
+    
+
+.子程序 _get_ds_sign_CN, 文本型, , https://github.com/DGP-Studio/Snap.Genshin
+    .局部变量 t, 文本型
+    .局部变量 r, 文本型
+    .局部变量 h, 文本型
+
+    t ＝ _get_time ()
+    r ＝ “1” ＋ _get_random_num (5)
+    h ＝ 取数据摘要 (文本到UTF8 (“salt=4a8knnbk5pbjqsrudp3dq484m9axoc5g” ＋ “&t=” ＋ t ＋ “&r=” ＋ r))
+    返回 (t ＋ “,” ＋ r ＋ “,” ＋ h)
+    
+
+.子程序 _get_ds_v2, 文本型, , https://github.com/Azure99/GenshinPlayerQuery
+    .参数 url, 文本型
+    .参数 body, 文本型
+    .局部变量 urlPart, 文本型, , "0"
+    .局部变量 parameters, 文本型, , "0"
+    .局部变量 query, 文本型
+    .局部变量 time, 文本型
+    .局部变量 random, 文本型
+    .局部变量 check, 文本型
+
+    query ＝ “”
+    urlPart ＝ 分割文本 (url, “?”, )
+    
+    .如果真 (取数组成员数 (urlPart) ＝ 2)
+        parameters ＝ 分割文本 (urlPart [2], “&”, )
+        数组_排序 (parameters, 0, 真)
+        query ＝ 数组_合并 (parameters, “&”)
+    .如果真结束
+    
+    time ＝ _get_time ()
+    random ＝ “1” ＋ _get_random_num (5)
+    check ＝ 取数据摘要 (文本到UTF8 (“salt=xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs” ＋ “&t=” ＋ time ＋ “&r=” ＋ random ＋ “&b=” ＋ body ＋ “&q=” ＋ query))
+    返回 (time ＋ “,” ＋ random ＋ “,” ＋ check)
+    
+
+.子程序 _get_Server, 文本型
+    .参数 uid, 文本型
+    .局部变量 i, 文本型
+
+    i ＝ 取文本左边 (uid, 1)
+    .判断开始 (i ＝ “1” 或 i ＝ “2”)
+        返回 (“cn_gf01”)
+    .判断 (i ＝ “5”)
+        返回 (“cn_qd01”)
+    .判断 (i ＝ “6”)
+        返回 (“os_usa”)
+    .判断 (i ＝ “7”)
+        返回 (“os_euro”)
+    .判断 (i ＝ “8”)
+        返回 (“os_asia”)
+    .判断 (i ＝ “9”)
+        返回 (“os_cht”)
+    .默认
+        返回 (“无效的UID”)
+    .判断结束
+    
+
+.子程序 _is_chinese, 逻辑型
+    .参数 uid, 文本型
+    .局部变量 i, 文本型
+
+    i ＝ 取文本左边 (uid, 1)
+    .判断开始 (i ＝ “1” 或 i ＝ “2” 或 i ＝ “5”)
+        返回 (真)
+    .默认
+        返回 (假)
+    .判断结束
+    
+
+.子程序 _get_API_ROOT_PATH, 文本型
+    .参数 uid, 文本型
+
+    .判断开始 (_is_chinese (uid))
+        返回 (“https://api-takumi.mihoyo.com/”)
+    .默认
+        返回 (“https://api-os-takumi.mihoyo.com/”)
+    .判断结束
+    
+
+.子程序 _get_Headers, 文本型
+    .参数 uid, 文本型
+    .参数 url, 文本型, 可空
+    .参数 body, 文本型, 可空
+    .局部变量 h, 文本型
+
+    .判断开始 (_is_chinese (uid))
+        h ＝ h ＋ “x-rpc-app_version: 2.11.1” ＋ #换行符
+        h ＝ h ＋ “x-rpc-client_type: 5” ＋ #换行符
+        h ＝ h ＋ “x-rpc-language: zh-cn” ＋ #换行符
+        h ＝ h ＋ “DS: ” ＋ _get_ds_v2 (url, body) ＋ #换行符
+        h ＝ h ＋ “Cookie: ” ＋ 取Cookie () ＋ #换行符
+        h ＝ h ＋ “User-Agent: Mozilla/5.0 (Linux; Ubuntu: arm64) miHoYoBBS/2.11.1”
+        
+    .默认
+        h ＝ h ＋ “x-rpc-app_version: 1.5.0” ＋ #换行符
+        h ＝ h ＋ “x-rpc-client_type: 5” ＋ #换行符
+        h ＝ h ＋ “x-rpc-language: zh-cn” ＋ #换行符
+        h ＝ h ＋ “DS: ” ＋ _get_ds_OS () ＋ #换行符
+        h ＝ h ＋ “Cookie: ” ＋ 取Cookie () ＋ #换行符
+        h ＝ h ＋ “User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 Edg/94.0.992.50”
+    .判断结束
+    
+    返回 (h)
+    
+
+.子程序 _get_Headers_sign_CN, 文本型, , https://github.com/DGP-Studio/Snap.Genshin
+    .局部变量 h, 文本型
+
+    h ＝ h ＋ “x-rpc-app_version: 2.10.1” ＋ #换行符
+    h ＝ h ＋ “x-rpc-client_type: 5” ＋ #换行符
+    h ＝ h ＋ “x-rpc-language: zh-cn” ＋ #换行符
+    h ＝ h ＋ “x-rpc-device_id: ” ＋ 创建GUID文本 () ＋ #换行符
+    h ＝ h ＋ “DS: ” ＋ _get_ds_sign_CN () ＋ #换行符
+    h ＝ h ＋ “Cookie: ” ＋ 取Cookie () ＋ #换行符
+    h ＝ h ＋ “Referer: https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon” ＋ #换行符
+    h ＝ h ＋ “User-Agent: Mozilla/5.0 (Linux; Ubuntu: arm64) miHoYoBBS/2.10.1”
+    h ＝ h ＋ “X-Requested-With: com.mihoyo.hyperion”
+    返回 (h)
+    
+
+.子程序 _api_req, 字节集
+    .参数 url, 文本型
+    .参数 method, 文本型
+    .参数 query, 文本型
+    .参数 uid, 文本型
+    .参数 code, 整数型
+    .局部变量 u, 文本型
+
+    .判断开始 (method ＝ “get”)
+        u ＝ url ＋ query
+        返回 (网页_访问_对象 (u, 0, , , , _get_Headers (uid, u, “”), , code))
+    .判断 (method ＝ “post”)
+        返回 (网页_访问_对象 (url, 1, query, , , _get_Headers (uid, url, query), , code))
+    .默认
+        返回 ({ })
+    .判断结束
+    
+
+.子程序 置Cookie, , 公开
+    .参数 Cookie, 文本型
+
+    ck ＝ 子文本替换 (Cookie, “ ”, , , , 真)
+    
+
+.子程序 取Cookie, 文本型, 公开
+    返回 (ck)
+    
+
+.子程序 get_user_stats, 文本型, 公开
+    .参数 uid, 文本型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 query, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    .判断开始 (_is_chinese (uid))
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/index”
+    .默认
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/index”
+    .判断结束
+    query ＝ “?server=” ＋ server ＋ “&role_id=” ＋ uid
+    
+    .如果真 (data.从JSON载入 (_api_req (url, “get”, query, uid, code), #文本编码格式_UTF8, , ))
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_characters, 文本型, 公开
+    .参数 uid, 文本型
+    .参数 character_ids, 文本型, 数组
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 list, 存取列表
+    .局部变量 i, 整数型
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    .判断开始 (_is_chinese (uid))
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/character”
+    .默认
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/character”
+    .判断结束
+    
+    .计次循环首 (取数组成员数 (character_ids), i)
+        list.置值 (“//[” ＋ 到文本 (i) ＋ “]”, character_ids [i])
+    .计次循环尾 ()
+    
+    data.创建 (“character_ids”, list, “role_id”, uid, “server”, server)
+    
+    .如果真 (data.从JSON载入 (_api_req (url, “post”, data.到JSON (假, , , , ), uid, code), #文本编码格式_UTF8, , ))
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_spiralAbyss, 文本型, 公开
+    .参数 uid, 文本型
+    .参数 schedule_type, 文本型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 query, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    .判断开始 (_is_chinese (uid))
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/spiralAbyss”
+    .默认
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/spiralAbyss”
+    .判断结束
+    query ＝ “?server=” ＋ server ＋ “&role_id=” ＋ uid ＋ “&schedule_type=” ＋ schedule_type
+    
+    .如果真 (data.从JSON载入 (_api_req (url, “get”, query, uid, code), #文本编码格式_UTF8, , ))
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_activities, 文本型, 公开
+    .参数 uid, 文本型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 query, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    .判断开始 (_is_chinese (uid))
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/activities”
+    .默认
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/activities”
+    .判断结束
+    query ＝ “?server=” ＋ server ＋ “&role_id=” ＋ uid
+    
+    .如果真 (data.从JSON载入 (_api_req (url, “get”, query, uid, code), #文本编码格式_UTF8, , ))
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_monthDetail, 文本型, 公开
+    .参数 uid, 文本型
+    .参数 page, 文本型
+    .参数 month, 文本型
+    .参数 type, 文本型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 query, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    .判断开始 (_is_chinese (uid))
+        url ＝ “https://hk4e-api.mihoyo.com/event/ys_ledger/monthDetail”
+        query ＝ “?page=” ＋ page ＋ “&month=” ＋ month ＋ “&limit=100&type=” ＋ type ＋ “&bind_uid=” ＋ uid ＋ “&bind_region=” ＋ server
+        
+    .默认
+        url ＝ “https://hk4e-api-os.mihoyo.com/event/ysledgeros/month_detail”
+        query ＝ “?page=” ＋ page ＋ “&month=” ＋ month ＋ “&limit=100&type=” ＋ type ＋ “&uid=” ＋ uid ＋ “&region=” ＋ server
+        
+    .判断结束
+    
+    .如果真 (data.从JSON载入 (_api_req (url, “get”, query, uid, code), #文本编码格式_UTF8, , ))
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_monthInfo, 文本型, 公开
+    .参数 uid, 文本型
+    .参数 month, 文本型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 query, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    .判断开始 (_is_chinese (uid))
+        url ＝ “https://hk4e-api.mihoyo.com/event/ys_ledger/monthInfo”
+        query ＝ “?month=” ＋ month ＋ “&bind_uid=” ＋ uid ＋ “&bind_region=” ＋ server
+        
+    .默认
+        url ＝ “https://hk4e-api-os.mihoyo.com/event/ysledgeros/month_info”
+        query ＝ “?month=” ＋ month ＋ “&uid=” ＋ uid ＋ “&region=” ＋ server
+        
+    .判断结束
+    
+    .如果真 (data.从JSON载入 (_api_req (url, “get”, query, uid, code), #文本编码格式_UTF8, , ))
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_dailyNote, 文本型, 公开
+    .参数 uid, 文本型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 query, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    .判断开始 (_is_chinese (uid))
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/dailyNote”
+    .默认
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/dailyNote”
+    .判断结束
+    query ＝ “?server=” ＋ server ＋ “&role_id=” ＋ uid
+    
+    .如果真 (data.从JSON载入 (_api_req (url, “get”, query, uid, code), #文本编码格式_UTF8, , ))
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_UserGameRolesByCookie, 文本型, 公开
+    .参数 CN, 逻辑型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    .判断开始 (CN)
+        url ＝ _get_API_ROOT_PATH () ＋ “binding/api/getUserGameRolesByCookie”
+        
+        .如果真 (data.从JSON载入 (_api_req (url, “get”, “”, “1”, code), #文本编码格式_UTF8, , ))
+            .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+                data.取键值表 (“//data”, return)
+                返回 (return.到JSON (假, , , , ))
+                
+            .默认
+                返回 (data.取文本 (“//message”))
+            .判断结束
+            
+        .如果真结束
+        
+        返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+        
+    .默认
+        url ＝ _get_API_ROOT_PATH () ＋ “binding/api/getUserGameRolesByCookie”
+        
+        .如果真 (data.从JSON载入 (_api_req (url, “get”, “”, “1”, code), #文本编码格式_UTF8, , ))
+            .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+                data.取键值表 (“//data”, return)
+                返回 (return.到JSON (假, , , , ))
+                
+            .默认
+                返回 (data.取文本 (“//message”))
+            .判断结束
+            
+        .如果真结束
+        
+        返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+        
+    .判断结束
+    
+
+.子程序 get_GameRecordCard, 文本型, 公开
+    .参数 uid, 文本型, , 米游社uid
+    .参数 CN, 逻辑型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 query, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    query ＝ “?uid=” ＋ uid
+    
+    .判断开始 (CN)
+        url ＝ _get_API_ROOT_PATH () ＋ “game_record/app/card/wapi/getGameRecordCard”
+        
+        .如果真 (data.从JSON载入 (_api_req (url, “get”, query, “1”, code), #文本编码格式_UTF8, , ))
+            .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+                data.取键值表 (“//data”, return)
+                返回 (return.到JSON (假, , , , ))
+                
+            .默认
+                返回 (data.取文本 (“//message”))
+            .判断结束
+            
+        .如果真结束
+        
+        返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+        
+    .默认
+        url ＝ _get_API_ROOT_PATH () ＋ “game_record/card/wapi/getGameRecordCard”
+        
+        .如果真 (data.从JSON载入 (_api_req (url, “get”, query, “9”, code), #文本编码格式_UTF8, , ))
+            .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+                data.取键值表 (“//data”, return)
+                返回 (return.到JSON (假, , , , ))
+                
+            .默认
+                返回 (data.取文本 (“//message”))
+            .判断结束
+            
+        .如果真结束
+        
+        返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+        
+    .判断结束
+    
+
+.子程序 get_signinHome_OS, 文本型, 公开
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    
+    .如果真 (data.从JSON载入 (_api_req (“https://hk4e-api-os.mihoyo.com/event/sol/home?lang=zh-cn&act_id=e202102251931481”, “get”, “”, “9”, code), #文本编码格式_UTF8, , ))
+        
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_signinInfo_OS, 文本型, 公开
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    
+    .如果真 (data.从JSON载入 (_api_req (“https://hk4e-api-os.mihoyo.com/event/sol/info?lang=zh-cn&act_id=e202102251931481”, “get”, “”, “9”, code), #文本编码格式_UTF8, , ))
+        
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_sign_OS, 文本型, 公开
+    .局部变量 query, 存取键值表
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    
+    query.创建 (“act_id”, “e202102251931481”)
+    
+    .如果真 (data.从JSON载入 (_api_req (“https://hk4e-api-os.mihoyo.com/event/sol/sign?lang=zh-cn”, “post”, query.到JSON (假, , , , ), “9”, code), #文本编码格式_UTF8, , ))
+        
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_signinInfo_CN, 文本型, 公开
+    .参数 uid, 文本型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 query, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    url ＝ “https://api-takumi.mihoyo.com/event/bbs_sign_reward/info”
+    query ＝ “?act_id=e202009291139501&region=” ＋ server ＋ “&uid=” ＋ uid
+    
+    .如果真 (data.从JSON载入 (_api_req (url, “get”, query, “1”, code), #文本编码格式_UTF8, , ))
+        
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_resignInfo_CN, 文本型, 公开
+    .参数 uid, 文本型
+    .局部变量 server, 文本型
+    .局部变量 url, 文本型
+    .局部变量 query, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    url ＝ “https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign_info”
+    query ＝ “?act_id=e202009291139501&region=” ＋ server ＋ “&uid=” ＋ uid
+    
+    .如果真 (data.从JSON载入 (_api_req (url, “get”, query, “1”, code), #文本编码格式_UTF8, , ))
+        
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_signinHome_CN, 文本型, 公开
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    
+    .如果真 (data.从JSON载入 (_api_req (“https://api-takumi.mihoyo.com/event/bbs_sign_reward/home?act_id=e202009291139501”, “get”, “”, “1”, code), #文本编码格式_UTF8, , ))
+        
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+
+.子程序 get_sign_CN, 文本型, 公开
+    .参数 uid, 文本型
+    .局部变量 server, 文本型
+    .局部变量 query, 存取键值表
+    .局部变量 data, 存取键值表
+    .局部变量 return, 存取键值表
+    .局部变量 code, 整数型
+
+    server ＝ _get_Server (uid)
+    query.创建 (“act_id”, “e202009291139501”, “region”, server, “uid”, uid)
+    
+    .如果真 (data.从JSON载入 (网页_访问_对象 (“https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign”, 1, query.到JSON (假, , , , ), , , _get_Headers_sign_CN (), , code), #文本编码格式_UTF8, , ))
+        
+        .判断开始 (data.取整数 (“//retcode”) ＝ 0)
+            data.取键值表 (“//data”, return)
+            返回 (return.到JSON (假, , , , ))
+            
+        .默认
+            返回 (data.取文本 (“//message”))
+        .判断结束
+        
+    .如果真结束
+    
+    返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
+    
+

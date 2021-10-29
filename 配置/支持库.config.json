@@ -1,0 +1,38 @@
+﻿[
+    {
+        "CmdCount": 681,
+        "Guid": "d09f2340818511d396f6aaf844c7e325",
+        "Key": "krnln",
+        "MaxRefConstPos": 180,
+        "MaxRefObjectPos": 49,
+        "Name": "系统核心支持库",
+        "Version": {
+            "Major": 5,
+            "Minor": 7
+        }
+    },
+    {
+        "CmdCount": 3,
+        "Guid": "4BB4003860154917BC7D8230BF4FA58A",
+        "Key": "dp1",
+        "MaxRefConstPos": 0,
+        "MaxRefObjectPos": 0,
+        "Name": "数据操作支持库一",
+        "Version": {
+            "Major": 2,
+            "Minor": 0
+        }
+    },
+    {
+        "CmdCount": 544,
+        "Guid": "AA50CDD5A14C4C5DB81BAE05DE4DDE6D",
+        "Key": "e2ee",
+        "MaxRefConstPos": 448,
+        "MaxRefObjectPos": 5,
+        "Name": "E2EE互联网服务器套件2.7.2",
+        "Version": {
+            "Major": 2,
+            "Minor": 0
+        }
+    }
+]
