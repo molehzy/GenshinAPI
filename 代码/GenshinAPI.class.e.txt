@@ -443,7 +443,7 @@
     .局部变量 code, 整数型
 
     .判断开始 (CN)
-        url ＝ _get_API_ROOT_PATH () ＋ “binding/api/getUserGameRolesByCookie”
+        url ＝ _get_API_ROOT_PATH (“1”) ＋ “binding/api/getUserGameRolesByCookie”
         
         .如果真 (data.从JSON载入 (_api_req (url, “get”, “”, “1”, code), #文本编码格式_UTF8, , ))
             .判断开始 (data.取整数 (“//retcode”) ＝ 0)
@@ -459,7 +459,7 @@
         返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
         
     .默认
-        url ＝ _get_API_ROOT_PATH () ＋ “binding/api/getUserGameRolesByCookie”
+        url ＝ _get_API_ROOT_PATH (“9”) ＋ “binding/api/getUserGameRolesByCookie”
         
         .如果真 (data.从JSON载入 (_api_req (url, “get”, “”, “1”, code), #文本编码格式_UTF8, , ))
             .判断开始 (data.取整数 (“//retcode”) ＝ 0)
@@ -490,7 +490,7 @@
     query ＝ “?uid=” ＋ uid
     
     .判断开始 (CN)
-        url ＝ _get_API_ROOT_PATH () ＋ “game_record/app/card/wapi/getGameRecordCard”
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/card/wapi/getGameRecordCard”
         
         .如果真 (data.从JSON载入 (_api_req (url, “get”, query, “1”, code), #文本编码格式_UTF8, , ))
             .判断开始 (data.取整数 (“//retcode”) ＝ 0)
@@ -506,7 +506,7 @@
         返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
         
     .默认
-        url ＝ _get_API_ROOT_PATH () ＋ “game_record/card/wapi/getGameRecordCard”
+        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/card/wapi/getGameRecordCard”
         
         .如果真 (data.从JSON载入 (_api_req (url, “get”, query, “9”, code), #文本编码格式_UTF8, , ))
             .判断开始 (data.取整数 (“//retcode”) ＝ 0)
