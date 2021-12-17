@@ -46,7 +46,7 @@
 
     t ＝ _get_time ()
     r ＝ _get_random_ascii_letters (6)
-    h ＝ 取数据摘要 (文本到UTF8 (“salt=6s25p5ox5y14umn1p61aqyyvbvvl3lrt” ＋ “&t=” ＋ t ＋ “&r=” ＋ r))
+    h ＝ 取数据摘要 (文本到UTF8 (“salt=6cqshh5dhw73bzxn20oexa9k516chk7s” ＋ “&t=” ＋ t ＋ “&r=” ＋ r))
     返回 (t ＋ “,” ＋ r ＋ “,” ＋ h)
     
 
@@ -110,10 +110,10 @@
 
 .子程序 _is_chinese, 逻辑型
     .参数 uid, 文本型
-    .局部变量 i, 文本型
+    .局部变量 i, 整数型
 
-    i ＝ 取文本左边 (uid, 1)
-    .判断开始 (i ＝ “1” 或 i ＝ “2” 或 i ＝ “5”)
+    i ＝ 到整数 (取文本左边 (uid, 1))
+    .判断开始 (i ＜ 6)
         返回 (真)
     .默认
         返回 (假)
@@ -121,12 +121,19 @@
     
 
 .子程序 _get_API_ROOT_PATH, 文本型
-    .参数 uid, 文本型
+    .参数 tag, 文本型
 
-    .判断开始 (_is_chinese (uid))
+    .判断开始 (tag ＝ “CN”)
         返回 (“https://api-takumi.mihoyo.com/”)
-    .默认
+        
+    .判断 (tag ＝ “OS_T”)
         返回 (“https://api-os-takumi.mihoyo.com/”)
+        
+    .判断 (tag ＝ “OS_B”)
+        返回 (“https://bbs-api-os.mihoyo.com/game_record/”)
+        
+    .默认
+        返回 (“”)
     .判断结束
     
 
@@ -146,7 +153,7 @@
         
     .默认
         h ＝ h ＋ “x-rpc-app_version: 1.5.0” ＋ #换行符
-        h ＝ h ＋ “x-rpc-client_type: 5” ＋ #换行符
+        h ＝ h ＋ “x-rpc-client_type: 4” ＋ #换行符
         h ＝ h ＋ “x-rpc-language: zh-cn” ＋ #换行符
         h ＝ h ＋ “DS: ” ＋ _get_ds_OS () ＋ #换行符
         h ＝ h ＋ “Cookie: ” ＋ 取Cookie () ＋ #换行符
@@ -176,7 +183,7 @@
     .参数 method, 文本型
     .参数 query, 文本型
     .参数 uid, 文本型
-    .参数 code, 整数型
+    .参数 code, 整数型, 参考
     .局部变量 u, 文本型
 
     .判断开始 (method ＝ “get”)
@@ -210,9 +217,9 @@
 
     server ＝ _get_Server (uid)
     .判断开始 (_is_chinese (uid))
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/index”
+        url ＝ _get_API_ROOT_PATH (“CN”) ＋ “game_record/app/genshin/api/index”
     .默认
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/index”
+        url ＝ _get_API_ROOT_PATH (“OS_B”) ＋ “genshin/api/index”
     .判断结束
     query ＝ “?server=” ＋ server ＋ “&role_id=” ＋ uid
     
@@ -243,9 +250,9 @@
 
     server ＝ _get_Server (uid)
     .判断开始 (_is_chinese (uid))
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/character”
+        url ＝ _get_API_ROOT_PATH (“CN”) ＋ “game_record/app/genshin/api/character”
     .默认
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/character”
+        url ＝ _get_API_ROOT_PATH (“OS_B”) ＋ “genshin/api/character”
     .判断结束
     
     .计次循环首 (取数组成员数 (character_ids), i)
@@ -280,9 +287,9 @@
 
     server ＝ _get_Server (uid)
     .判断开始 (_is_chinese (uid))
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/spiralAbyss”
+        url ＝ _get_API_ROOT_PATH (“CN”) ＋ “game_record/app/genshin/api/spiralAbyss”
     .默认
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/spiralAbyss”
+        url ＝ _get_API_ROOT_PATH (“OS_B”) ＋ “genshin/api/spiralAbyss”
     .判断结束
     query ＝ “?server=” ＋ server ＋ “&role_id=” ＋ uid ＋ “&schedule_type=” ＋ schedule_type
     
@@ -311,9 +318,9 @@
 
     server ＝ _get_Server (uid)
     .判断开始 (_is_chinese (uid))
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/activities”
+        url ＝ _get_API_ROOT_PATH (“CN”) ＋ “game_record/app/genshin/api/activities”
     .默认
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/activities”
+        url ＝ _get_API_ROOT_PATH (“OS_B”) ＋ “genshin/api/activities”
     .判断结束
     query ＝ “?server=” ＋ server ＋ “&role_id=” ＋ uid
     
@@ -414,9 +421,9 @@
 
     server ＝ _get_Server (uid)
     .判断开始 (_is_chinese (uid))
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/genshin/api/dailyNote”
+        url ＝ _get_API_ROOT_PATH (“CN”) ＋ “game_record/app/genshin/api/dailyNote”
     .默认
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/genshin/api/dailyNote”
+        url ＝ _get_API_ROOT_PATH (“OS_B”) ＋ “genshin/api/dailyNote”
     .判断结束
     query ＝ “?server=” ＋ server ＋ “&role_id=” ＋ uid
     
@@ -443,7 +450,7 @@
     .局部变量 code, 整数型
 
     .判断开始 (CN)
-        url ＝ _get_API_ROOT_PATH (“1”) ＋ “binding/api/getUserGameRolesByCookie”
+        url ＝ _get_API_ROOT_PATH (“CN”) ＋ “binding/api/getUserGameRolesByCookie”
         
         .如果真 (data.从JSON载入 (_api_req (url, “get”, “”, “1”, code), #文本编码格式_UTF8, , ))
             .判断开始 (data.取整数 (“//retcode”) ＝ 0)
@@ -459,7 +466,7 @@
         返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
         
     .默认
-        url ＝ _get_API_ROOT_PATH (“9”) ＋ “binding/api/getUserGameRolesByCookie”
+        url ＝ _get_API_ROOT_PATH (“OS_T”) ＋ “binding/api/getUserGameRolesByCookie”
         
         .如果真 (data.从JSON载入 (_api_req (url, “get”, “”, “1”, code), #文本编码格式_UTF8, , ))
             .判断开始 (data.取整数 (“//retcode”) ＝ 0)
@@ -490,7 +497,7 @@
     query ＝ “?uid=” ＋ uid
     
     .判断开始 (CN)
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/app/card/wapi/getGameRecordCard”
+        url ＝ _get_API_ROOT_PATH (“CN”) ＋ “game_record/app/card/wapi/getGameRecordCard”
         
         .如果真 (data.从JSON载入 (_api_req (url, “get”, query, “1”, code), #文本编码格式_UTF8, , ))
             .判断开始 (data.取整数 (“//retcode”) ＝ 0)
@@ -506,7 +513,7 @@
         返回 (“API请求失败,状态码 ” ＋ 到文本 (code))
         
     .默认
-        url ＝ _get_API_ROOT_PATH (uid) ＋ “game_record/card/wapi/getGameRecordCard”
+        url ＝ _get_API_ROOT_PATH (“OS_B”) ＋ “card/wapi/getGameRecordCard”
         
         .如果真 (data.从JSON载入 (_api_req (url, “get”, query, “9”, code), #文本编码格式_UTF8, , ))
             .判断开始 (data.取整数 (“//retcode”) ＝ 0)
