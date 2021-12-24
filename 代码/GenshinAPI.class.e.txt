@@ -39,7 +39,7 @@
     返回 (return)
     
 
-.子程序 _get_ds_OS, 文本型, , https://github.com/genshin-kit/genshin-kit
+.子程序 _get_ds_OS, 文本型, , https://github.com/thesadru/genshin.py
     .局部变量 t, 文本型
     .局部变量 r, 文本型
     .局部变量 h, 文本型
@@ -124,7 +124,7 @@
     .参数 tag, 文本型
 
     .判断开始 (tag ＝ “CN”)
-        返回 (“https://api-takumi.mihoyo.com/”)
+        返回 (“https://api-takumi-record.mihoyo.com/”)
         
     .判断 (tag ＝ “OS_T”)
         返回 (“https://api-os-takumi.mihoyo.com/”)
@@ -144,7 +144,7 @@
     .局部变量 h, 文本型
 
     .判断开始 (_is_chinese (uid))
-        h ＝ h ＋ “x-rpc-app_version: 2.11.1” ＋ #换行符
+        h ＝ h ＋ “x-rpc-app_version: 2.19.1” ＋ #换行符
         h ＝ h ＋ “x-rpc-client_type: 5” ＋ #换行符
         h ＝ h ＋ “x-rpc-language: zh-cn” ＋ #换行符
         h ＝ h ＋ “DS: ” ＋ _get_ds_v2 (url, body) ＋ #换行符
@@ -173,7 +173,7 @@
     h ＝ h ＋ “DS: ” ＋ _get_ds_sign_CN () ＋ #换行符
     h ＝ h ＋ “Cookie: ” ＋ 取Cookie () ＋ #换行符
     h ＝ h ＋ “Referer: https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon” ＋ #换行符
-    h ＝ h ＋ “User-Agent: Mozilla/5.0 (Linux; Ubuntu: arm64) miHoYoBBS/2.10.1”
+    h ＝ h ＋ “User-Agent: Mozilla/5.0 (Linux; arm64) miHoYoBBS/2.10.1”
     h ＝ h ＋ “X-Requested-With: com.mihoyo.hyperion”
     返回 (h)
     
