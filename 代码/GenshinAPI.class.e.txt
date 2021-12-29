@@ -450,7 +450,7 @@
     .局部变量 code, 整数型
 
     .判断开始 (CN)
-        url ＝ _get_API_ROOT_PATH (“CN”) ＋ “binding/api/getUserGameRolesByCookie”
+        url ＝ “https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie”
         
         .如果真 (data.从JSON载入 (_api_req (url, “get”, “”, “1”, code), #文本编码格式_UTF8, , ))
             .判断开始 (data.取整数 (“//retcode”) ＝ 0)
